@@ -2,8 +2,8 @@ package com.example.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.DAOFacade
-import com.example.DAOFacadeImpl
+import com.example.dao.DAOFacade
+import com.example.dao.DAOFacadeImpl
 import io.ktor.server.auth.*
 import io.ktor.client.*
 import io.ktor.client.call.*

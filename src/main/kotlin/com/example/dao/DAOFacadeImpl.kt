@@ -1,8 +1,8 @@
-package com.example
+package com.example.dao
 
 import com.example.models.User
 import com.example.models.Users
-import com.example.plugins.DatabaseFactory.dbQuery
+import com.example.dao.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
