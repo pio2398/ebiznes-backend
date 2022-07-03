@@ -1,12 +1,9 @@
 package com.example.models
 
-import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Table
 
-data class UserCart(val id: Int)
-
-object UserCarts : IntIdTable() {
-    var user by Users referencedOn UserRatings.film // use referencedOn for normal references
-
-
+object UserCarts : Table() {
+    var user = reference("user", Users)
+    var product = reference("product", Products)
+    override val primaryKey = PrimaryKey(user, product)
 }
