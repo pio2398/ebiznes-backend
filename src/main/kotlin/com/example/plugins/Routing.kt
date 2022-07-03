@@ -1,19 +1,23 @@
 package com.example.plugins
 
+import com.example.services.ProductService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.locations.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.java.KoinJavaComponent.inject
+import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
     install(Locations) {
     }
+    val productService: ProductService by inject()
 
     routing {
         get("/") {
-            call.respondText("Hello World!")
+            call.respondText(productService.getProducts())
         }
         get<MyLocation> {
             call.respondText("Location: name=${it.name}, arg1=${it.arg1}, arg2=${it.arg2}")

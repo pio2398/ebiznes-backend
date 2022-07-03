@@ -7,6 +7,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 object Products : IntIdTable() {
     val name = varchar("name", 254)
     val description = text("description")
+    val price = double("price")
 }
 
 class Product(id: EntityID<Int>) : IntEntity(id) {
@@ -14,4 +15,5 @@ class Product(id: EntityID<Int>) : IntEntity(id) {
 
     var name by Products.name
     var description by Products.description
+    var price by Products.price
 }

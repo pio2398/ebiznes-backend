@@ -2,10 +2,9 @@ package com.example.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.dao.UserDAO
-import com.example.dao.UserDAOImpl
+import com.example.dao.user.UserDAO
+import com.example.dao.user.UserDAOImpl
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.call.body
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.contentnegotiation.*
