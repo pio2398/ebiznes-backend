@@ -6,7 +6,7 @@ interface ProductService {
     fun getProducts(): String
 }
 
-class ProductServiceImpl(val productDAO: ProductDAO) : ProductService {
+class ProductServiceImpl(private val productDAO: ProductDAO) : ProductService {
     override fun getProducts(): String {
         return productDAO.test()
     }

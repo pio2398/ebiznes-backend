@@ -1,9 +1,13 @@
 package com.example
 
 import com.example.dao.DatabaseFactory
+import com.example.dao.category.CategoryDAO
+import com.example.dao.category.CategoryDAOImpl
 import com.example.dao.product.ProductDAO
 import com.example.dao.product.ProductDAOImpl
 import com.example.plugins.*
+import com.example.services.DebugService
+import com.example.services.DebugServiceImpl
 import com.example.services.ProductService
 import com.example.services.ProductServiceImpl
 import io.ktor.server.application.*
@@ -15,6 +19,9 @@ import org.koin.ktor.plugin.koin
 val koinModule = module {
     singleOf(::ProductServiceImpl) { bind<ProductService>() }
     singleOf(::ProductDAOImpl) { bind<ProductDAO>() }
+    singleOf(::CategoryDAOImpl) { bind<CategoryDAO>() }
+
+    singleOf(::DebugServiceImpl) { bind<DebugService>() }
 }
 
 fun main(args: Array<String>): Unit =

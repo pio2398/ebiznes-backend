@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.services.DebugService
 import com.example.services.ProductService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,10 +15,14 @@ fun Application.configureRouting() {
     install(Locations) {
     }
     val productService: ProductService by inject()
+    val debugService: DebugService by inject()
 
     routing {
         get("/") {
             call.respondText(productService.getProducts())
+        }
+        get("/debug") {
+            call.respondText(debugService.debug())
         }
         get<MyLocation> {
             call.respondText("Location: name=${it.name}, arg1=${it.arg1}, arg2=${it.arg2}")
