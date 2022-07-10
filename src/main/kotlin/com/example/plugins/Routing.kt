@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.products.productRoutes
 import com.example.services.DebugService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -18,4 +19,5 @@ fun Application.configureRouting() {
             call.respondText(debugService.debug())
         }
     }
+    productRoutes()
 }

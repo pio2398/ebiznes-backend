@@ -6,9 +6,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-fun Application.configureRouting() {
+fun Application.productRoutes() {
     val productService: ProductService by inject()
-//    val debugService: DebugService by inject()
 
     routing {
         get("/products") {

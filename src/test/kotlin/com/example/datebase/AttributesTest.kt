@@ -11,7 +11,7 @@ import kotlin.test.*
 class AttributesTest {
     @BeforeTest
     fun prepareDataBase() {
-        Database.connect("jdbc:h2:mem:regular;DB_CLOSE_DELAY=-1;", "org.h2.Driver")
+        Database.connect("jdbc:h2:mem:regular;", "org.h2.Driver")
     }
 
     @Test

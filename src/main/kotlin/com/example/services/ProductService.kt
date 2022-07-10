@@ -9,8 +9,8 @@ interface ProductService {
     fun getProductsList(): ProductList
 }
 
-class ProductServiceImpl() : ProductService {
-    override fun getProductsList(): ProductList = transaction {
+class ProductServiceImpl(private val databaseFactory: DatabaseFactory) : ProductService {
+    override fun getProductsList(): ProductList = transaction(databaseFactory.dataBase) {
         var products = Product.all().map { ProductOnList(it) }
         ProductList(products)
     }

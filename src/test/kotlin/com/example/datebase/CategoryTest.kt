@@ -12,24 +12,18 @@ import kotlin.test.assertEquals
 class CategoryTest {
     @BeforeTest
     fun prepareDataBase() {
-        Database.connect("jdbc:h2:mem:regular;DB_CLOSE_DELAY=-1;", "org.h2.Driver")
-    }
-
-    @AfterTest()
-    fun cleanDataBase() {
-        prepareDataBase()
+        Database.connect("jdbc:h2:mem:regular;", "org.h2.Driver")
     }
 
     @Test
     fun addRootCategory() {
-        var newCategory: Category? = null
         transaction {
+            var newCategory: Category? = null
+
             SchemaUtils.create(Categories)
-        }
-        transaction {
+
             newCategory = Category.new { name = "test" }
-        }
-        transaction {
+
             assertEquals(Categories.selectAll().count(), 1)
             val categoryResult = Category.findById(newCategory!!.id)
             assertEquals(categoryResult!!.name, "test")
