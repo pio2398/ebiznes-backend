@@ -1,38 +1,38 @@
 package com.example
 
-import com.example.dao.DatabaseFactory
-import com.example.dao.category.CategoryDAO
-import com.example.dao.category.CategoryDAOImpl
-import com.example.dao.product.ProductDAO
-import com.example.dao.product.ProductDAOImpl
 import com.example.plugins.*
-import com.example.services.DebugService
-import com.example.services.DebugServiceImpl
-import com.example.services.ProductService
-import com.example.services.ProductServiceImpl
+import com.example.services.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.contentnegotiation.*
+import org.koin.core.context.GlobalContext
+import org.koin.core.context.loadKoinModules
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import org.koin.ktor.plugin.koin
+import org.koin.ktor.ext.inject
 
 val koinModule = module {
     singleOf(::ProductServiceImpl) { bind<ProductService>() }
-    singleOf(::ProductDAOImpl) { bind<ProductDAO>() }
-    singleOf(::CategoryDAOImpl) { bind<CategoryDAO>() }
-
     singleOf(::DebugServiceImpl) { bind<DebugService>() }
 }
 
-fun main(args: Array<String>): Unit =
+fun main(args: Array<String>) {
+    GlobalContext.startKoin {}
     io.ktor.server.netty.EngineMain.main(args)
+}
 
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
-    koin {
-        modules(koinModule)
-    }
-    DatabaseFactory.init()
+    loadKoinModules(koinModule)
+    loadKoinModules(koinDbModule)
+    val databaseFactory: DatabaseFactory by inject()
+
+    databaseFactory.init()
     configureRouting()
     configureSecurity()
+    install(ContentNegotiation) {
+        json()
+    }
 }

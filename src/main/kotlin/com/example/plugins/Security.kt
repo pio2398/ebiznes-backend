@@ -2,10 +2,7 @@ package com.example.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.dao.user.UserDAO
-import com.example.dao.user.UserDAOImpl
 import io.ktor.client.*
-import io.ktor.client.call.body
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -51,7 +48,7 @@ fun Application.configureSecurity() {
                     accessTokenUrl = "https://github.com/login/oauth/access_token",
                     requestMethod = HttpMethod.Post,
                     clientId = System.getenv("GITHUB_CLIENT_ID"),
-                    clientSecret = System.getenv("GITHUB_CLIENT_SECRET"),
+                    clientSecret = System.getenv("GITHUB_CLIENT_SECRET")
                 )
             }
             client = HttpClient(Apache)
@@ -84,61 +81,62 @@ fun Application.configureSecurity() {
         }
     }
 
-    routing {
-        authenticate("auth-oauth-google") {
-            get("/login_google") {
-                call.respondRedirect("/callback")
-            }
-
-            get("/callback") {
-                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                println(principal)
-                val token_oauth = principal?.accessToken.toString()
-                val userInfo: UserInfoGoogle = httpClient.get("https://www.googleapis.com/oauth2/v2/userinfo") {
-                    headers {
-                        append(HttpHeaders.Authorization, "Bearer $token_oauth")
-                    }
-                }.body()
-                val dao: UserDAO = UserDAOImpl().apply {
-                }
-                val user = dao.getOrCreateUser(userInfo.name, token_oauth, userInfo.id)
-                val token = JWT.create()
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .withClaim("username", user!!.username)
-                    .withExpiresAt(Date(System.currentTimeMillis() + 60000))
-                    .sign(Algorithm.HMAC256(secret))
-                call.respond(hashMapOf("token" to token))
-            }
-        }
-        authenticate("auth-oauth-github") {
-            get("/login_github") {
-                call.respondRedirect("/callback_github")
-            }
-
-            get("/callback_github") {
-                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                println(principal)
-                val oauth_token = principal?.accessToken.toString()
-                val userInfo: UserInfoGithub = httpClient.get("https://api.github.com/user") {
-                    headers {
-                        append(HttpHeaders.Authorization, "Bearer $oauth_token")
-                    }
-                }.body()
-                val dao: UserDAO = UserDAOImpl().apply {
-                }
-                val user = dao.getOrCreateUser(userInfo.login, oauth_token, userInfo.id.toString())
-
-                val token = JWT.create()
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .withClaim("username", user!!.username)
-                    .withExpiresAt(Date(System.currentTimeMillis() + 60000))
-                    .sign(Algorithm.HMAC256(secret))
-                call.respond(hashMapOf("token" to token))
-            }
-        }
-    }
+//    routing {
+//        authenticate("auth-oauth-google") {
+//            get("/login_google") {
+//                call.respondRedirect("/callback")
+//            }
+//
+//            get("/callback") {
+//                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
+//                println(principal)
+//                val token_oauth = principal?.accessToken.toString()
+//                val userInfo: UserInfoGoogle = httpClient.get("https://www.googleapis.com/oauth2/v2/userinfo") {
+//                    headers {
+//                        append(HttpHeaders.Authorization, "Bearer $token_oauth")
+//                    }
+//                }.body()
+//                val dao: User = User().apply {
+//                }
+//                val user = dao.getOrCreateUser(userInfo.name, token_oauth, userInfo.id)
+//                val token = JWT.create()
+//                    .withAudience(audience)
+//                    .withIssuer(issuer)
+//                    .withClaim("username", user!!.username)
+//                    .withExpiresAt(Date(System.currentTimeMillis() + 60000))
+//                    .sign(Algorithm.HMAC256(secret))
+//                call.respond(hashMapOf("token" to token))
+//            }
+//        }
+//        authenticate("auth-oauth-github") {
+//            get("/login_github") {
+//                call.respondRedirect("/callback_github")
+//            }
+//
+//            get("/callback_github") {
+//                val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
+//                println(principal)
+//                val oauth_token = principal?.accessToken.toString()
+//                val userInfo: UserInfoGithub = httpClient.get("https://api.github.com/user") {
+//                    headers {
+//                        append(HttpHeaders.Authorization, "Bearer $oauth_token")
+//                    }
+//                }.body()
+//                val dao: UserDAO = UserDAOImpl().apply {
+//                }
+//                val user = dao.getOrCreateUser(userInfo.login, oauth_token, userInfo.id.toString())
+//
+//                val token = JWT.create()
+//                    .withAudience(audience)
+//                    .withIssuer(issuer)
+//                    .withClaim("username", user!!.username)
+//                    .withExpiresAt(Date(System.currentTimeMillis() + 60000))
+//                    .sign(Algorithm.HMAC256(secret))
+//                call.respond(hashMapOf("token" to token))
+//            }
+//        }
+//    }
+// }
 }
 
 @Serializable
@@ -154,5 +152,5 @@ data class UserInfoGoogle(
 @Serializable
 data class UserInfoGithub(
     val id: Int,
-    val login: String,
+    val login: String
 )

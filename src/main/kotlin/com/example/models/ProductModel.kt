@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 object Products : IntIdTable() {
     val name = varchar("name", 254)
-    val description = text("description")
+    val description = text("description").nullable()
     val price = double("price")
 }
 

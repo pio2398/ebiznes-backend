@@ -7,11 +7,11 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 object Attributes : IntIdTable() {
     val name = varchar("name", 254)
-    val type = varchar("type", 254)
+    val type = varchar("type", 254).nullable()
 }
 
 class Attribute(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<Product>(Attributes)
+    companion object : IntEntityClass<Attribute>(Attributes)
 
     var name by Attributes.name
     var type by Attributes.type

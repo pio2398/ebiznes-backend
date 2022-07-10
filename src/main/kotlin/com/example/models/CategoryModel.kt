@@ -10,7 +10,8 @@ object CategoriesAttributes : Table() {
     val category = reference("category", Categories)
     val attribute = reference("attribute", Attributes)
     override val primaryKey = PrimaryKey(
-        category, attribute,
+        category,
+        attribute
     )
 }
 
