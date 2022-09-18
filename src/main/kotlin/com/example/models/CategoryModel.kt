@@ -22,6 +22,7 @@ object Categories : IntIdTable() {
 
 class Category(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Category>(Categories)
+
     var name by Categories.name
     var parent by Category optionalReferencedOn Categories.parent
     var attributes by Attribute via CategoriesAttributes

@@ -13,6 +13,7 @@ object Users : IntIdTable() {
 
 class User(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<User>(Users)
+
     var username by Users.username
     var cart by Product via UserCarts
     var token by Users.token

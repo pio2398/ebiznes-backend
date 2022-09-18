@@ -1,8 +1,8 @@
-package com.example.products
+package com.example.categories
 
+import com.example.categories.dto.CategoryDTO
 import com.example.exceptions.InvalidInputException
-import com.example.products.dto.ProductDetails
-import com.example.services.ProductService
+import com.example.services.CategoriesService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -11,17 +11,17 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.SerializationException
 import org.koin.ktor.ext.inject
 
-fun Application.productRoutes() {
-    val productService: ProductService by inject()
+fun Application.categoriesRoutes() {
+    val categoryService: CategoriesService by inject()
 
     routing {
-        get("/products") {
-            call.respond(productService.getProductsList())
+        get("/categories") {
+            call.respond(categoryService.getCategoriesList())
         }
-        post("/products") {
+        post("/categories") {
             try {
-                val product = call.receive<ProductDetails>()
-                call.respond(productService.addProduct(product))
+                val category = call.receive<CategoryDTO>()
+                call.respond(categoryService.addCategory(category))
             } catch (e: SerializationException) {
                 call.respondText("{'error' : '${e.message}'", status = HttpStatusCode.BadRequest)
             } catch (e: InvalidInputException) {

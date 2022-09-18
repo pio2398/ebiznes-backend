@@ -18,6 +18,7 @@ object Orders : IntIdTable() {
 
 class Order(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Order>(Orders)
+
     var user by Orders.user
 
     var product by Product via ProductsInOrder
