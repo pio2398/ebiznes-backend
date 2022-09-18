@@ -9,7 +9,8 @@ data class ProductDetails(
     val category_id: Int,
     val product_id: Int? = null,
     val description: String? = null,
-    val picture_url: String? = null
+    val picture_url: String? = null,
+    val attributes: List<ProductAttributes> = listOf()
 ) {
     constructor(product: Product) : this(
         product.name,

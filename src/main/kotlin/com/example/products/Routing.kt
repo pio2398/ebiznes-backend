@@ -1,6 +1,8 @@
 package com.example.products
 
 import com.example.exceptions.InvalidInputException
+import com.example.helpers.getIdOfResource
+import com.example.helpers.respondOrNotFound
 import com.example.products.dto.ProductDetails
 import com.example.services.ProductService
 import io.ktor.http.*
@@ -27,6 +29,9 @@ fun Application.productRoutes() {
             } catch (e: InvalidInputException) {
                 call.respondText("{'error' : '${e.message}'", status = HttpStatusCode.BadRequest)
             }
+        }
+        get("/products/{id}") {
+            call.respondOrNotFound(productService.getProduct(call.getIdOfResource()));
         }
     }
 }

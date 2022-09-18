@@ -22,9 +22,9 @@ class ProductServiceImpl(private val databaseFactory: DatabaseFactory) : Product
         Product.all().map { ProductOnList(it) };
     }
 
-    override fun getProduct(product_id: Int): ProductDetails? {
+    override fun getProduct(product_id: Int): ProductDetails? = transaction(databaseFactory.dataBase) {
         val product = Product.findById(product_id)
-        return if (product == null) null else ProductDetails(product)
+        if (product == null) null else ProductDetails(product)
     }
 
     override fun addProduct(productDetails: ProductDetails): ProductDetails = transaction(databaseFactory.dataBase) {

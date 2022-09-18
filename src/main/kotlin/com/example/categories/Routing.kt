@@ -2,6 +2,8 @@ package com.example.categories
 
 import com.example.categories.dto.CategoryDTO
 import com.example.exceptions.InvalidInputException
+import com.example.helpers.getIdOfResource
+import com.example.helpers.respondOrNotFound
 import com.example.services.CategoriesService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -30,6 +32,9 @@ fun Application.categoriesRoutes() {
             } catch (e: InvalidInputException) {
                 call.respondText("{'error' : '${e.message}'", status = HttpStatusCode.BadRequest)
             }
+        }
+        get("/categories/{id}") {
+            call.respondOrNotFound(categoryService.getCategory(call.getIdOfResource()));
         }
     }
 }

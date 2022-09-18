@@ -24,9 +24,9 @@ class CategoriesServiceImpl(private val databaseFactory: DatabaseFactory) : Cate
         Category.find(Categories.parent eq 1).map { CategoryDTO(it) }
     }
 
-    override fun getCategory(category_id: Int): CategoryDTO? {
+    override fun getCategory(category_id: Int): CategoryDTO? = transaction(databaseFactory.dataBase) {
         val category = Category.findById(category_id)
-        return if (category == null) null else CategoryDTO(category)
+        if (category == null) null else CategoryDTO(category)
     }
 
     override fun addCategory(category: CategoryDTO): CategoryDTO = transaction(databaseFactory.dataBase) {
