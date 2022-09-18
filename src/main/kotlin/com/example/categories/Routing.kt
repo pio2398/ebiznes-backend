@@ -18,6 +18,9 @@ fun Application.categoriesRoutes() {
         get("/categories") {
             call.respond(categoryService.getCategoriesList())
         }
+        get("/categories/main_page") {
+            call.respond(categoryService.getCategoriesListOnMainPage())
+        }
         post("/categories") {
             try {
                 val category = call.receive<CategoryDTO>()
