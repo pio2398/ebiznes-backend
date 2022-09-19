@@ -22,7 +22,7 @@ class AttributesTest {
             SchemaUtils.create(Attributes)
             val newAttribute = Attribute.new { name = "test" }
             assertEquals(Attributes.selectAll().count(), 1)
-            val resultAttribute = Attribute.findById(newAttribute!!.id)
+            val resultAttribute = Attribute.findById(newAttribute.id)
             assertEquals(resultAttribute!!.name, "test")
             assertEquals(resultAttribute.id, newAttribute.id)
         }

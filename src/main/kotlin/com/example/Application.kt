@@ -1,7 +1,6 @@
 package com.example
 
 import com.example.plugins.configureRouting
-import com.example.plugins.configureSecurity
 import com.example.services.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -24,11 +23,11 @@ fun main(args: Array<String>) {
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
     install(Koin) {
-        modules(koinModule, koinDbModule)
+        modules(koinModule, koinDbModule, module { single<SettingsService> { SettingsServiceImpl(environment) } })
     }
     install(ContentNegotiation) {
         json()
     }
     configureRouting()
-    configureSecurity()
+//    configureSecurity()
 }

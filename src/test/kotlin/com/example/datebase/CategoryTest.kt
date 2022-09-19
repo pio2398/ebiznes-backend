@@ -19,16 +19,16 @@ class CategoryTest {
     @Test
     fun addRootCategory() {
         transaction {
-            var newCategory: Category? = null
+            var newCategory: Category?
 
             SchemaUtils.create(Categories)
 
             newCategory = Category.new { name = "test" }
 
             assertEquals(Categories.selectAll().count(), 1)
-            val categoryResult = Category.findById(newCategory!!.id)
+            val categoryResult = Category.findById(newCategory.id)
             assertEquals(categoryResult!!.name, "test")
-            assertEquals(categoryResult.id, newCategory!!.id)
+            assertEquals(categoryResult.id, newCategory.id)
         }
     }
 
@@ -43,7 +43,7 @@ class CategoryTest {
                 name = "child"; parent = newCategory
             }
 
-            val categoryResult = Category.findById(newSubCategory!!.id)
+            val categoryResult = Category.findById(newSubCategory.id)
 
             assertEquals(categoryResult!!.parent!!.name, "root")
             assertEquals(categoryResult.name, "child")

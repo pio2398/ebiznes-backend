@@ -47,7 +47,7 @@ class ProductTest {
 
             val productService = ProductServiceImpl(mockDb)
             val productList = productService.getProductsList()
-            assertEquals(listOf(ProductOnList(name = product.name, price = product.price)), productList)
+            assertEquals(listOf(ProductOnList(name = product.name, price = product.price, id = 1)), productList)
         }
     }
 
