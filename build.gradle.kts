@@ -49,6 +49,9 @@ dependencies {
     implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
     implementation("org.xerial:sqlite-jdbc:3.30.1")
 
+    implementation("io.ktor:ktor-server-sessions:$ktor_version")
+
+
     // Testing
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

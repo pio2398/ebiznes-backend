@@ -1,5 +1,7 @@
 package com.example
 
+import com.example.plugins.configureAuth
+import com.example.plugins.configureCookies
 import com.example.plugins.configureRouting
 import com.example.services.*
 import io.ktor.serialization.kotlinx.json.*
@@ -11,9 +13,10 @@ import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 
 val koinModule = module {
+    singleOf(::SettingsServiceImpl) { bind<SettingsService>() }
     singleOf(::ProductServiceImpl) { bind<ProductService>() }
-    singleOf(::DebugServiceImpl) { bind<DebugService>() }
     singleOf(::CategoriesServiceImpl) { bind<CategoriesService>() }
+    singleOf(::UserServiceImpl) { bind<UserService>() }
 }
 
 fun main(args: Array<String>) {
@@ -29,5 +32,6 @@ fun Application.module() {
         json()
     }
     configureRouting()
-//    configureSecurity()
+    configureAuth()
+    configureCookies()
 }

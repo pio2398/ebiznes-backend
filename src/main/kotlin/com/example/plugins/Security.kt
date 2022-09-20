@@ -37,7 +37,7 @@ fun Application.configureAuth() {
             }
         }
         oauth("auth-oauth-google") {
-            urlProvider = { "${settingsService.projectDomain}/auth/google/callback" }
+            urlProvider = { "${settingsService.projectDomain.domain}/auth/google/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",
