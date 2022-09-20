@@ -10,7 +10,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -73,9 +72,9 @@ data class UserResponse(
 data class RedirectUrlSession(val url: String)
 
 interface UserService {
-    suspend fun loginFacebook(accessToken: String): UserResponse;
-    suspend fun loginGoogle(accessToken: String): UserResponse;
-    suspend fun loginGithub(accessToken: String): UserResponse;
+    suspend fun loginFacebook(accessToken: String): UserResponse
+    suspend fun loginGoogle(accessToken: String): UserResponse
+    suspend fun loginGithub(accessToken: String): UserResponse
     fun createToken(user: UserResponse): String
 }
 
@@ -87,22 +86,20 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
         val userInfo: FacebookUserInfo = httpClient.get(
             "https://graph.facebook.com/me?fields=id,name,email,picture,first_name,last_name&access_token=${accessToken}"
         ).body()
-        var currentUser: User? = null;
-        transaction(databaseFactory.dataBase) {
-            currentUser = User.find(Users.facebook_token eq userInfo.id).firstOrNull()
-        }
-        if (currentUser != null) {
-            return UserResponse(currentUser!!)
-        }
-        var userId: EntityID<Int>? = null
-        transaction(databaseFactory.dataBase) {
 
-            userId = Users.insert {
-                it[Users.username] = userInfo.name
-                it[Users.facebook_token] = userInfo.id
+        return transaction(databaseFactory.dataBase) {
+            val currentUser = User.find(Users.facebook_token eq userInfo.id).firstOrNull()
+
+            if (currentUser != null) {
+                return@transaction UserResponse(currentUser)
+            }
+            val userId = Users.insert {
+                it[username] = userInfo.name
+                it[facebook_token] = userInfo.id
             } get Users.id
+
+            return@transaction UserResponse(id = userId.value, admin = false, display_name = userInfo.name)
         }
-        return UserResponse(id = userId!!.value, admin = false, display_name = userInfo.name)
 
     }
 
@@ -114,22 +111,22 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
                 append(HttpHeaders.Authorization, "Bearer $accessToken")
             }
         }.body()
-        var userId: EntityID<Int>? = null
-        transaction(databaseFactory.dataBase) {
 
+        return transaction(databaseFactory.dataBase) {
 
             val currentUser = User.find(Users.google_token eq userInfo.id).firstOrNull()
             if (currentUser != null) {
                 return@transaction UserResponse(currentUser)
             }
 
-            userId = Users.insert {
-                it[Users.username] = userInfo.name
-                it[Users.google_token] = userInfo.id
+            val userId = Users.insert {
+                it[username] = userInfo.name
+                it[google_token] = userInfo.id
             } get Users.id
-        }
 
-        return UserResponse(id = userId!!.value, admin = false, display_name = userInfo.name)
+
+            return@transaction UserResponse(id = userId.value, admin = false, display_name = userInfo.name)
+        }
     }
 
     override suspend fun loginGithub(accessToken: String): UserResponse {
@@ -138,19 +135,20 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
                 append(HttpHeaders.Authorization, "Bearer $accessToken")
             }
         }.body()
+        return transaction(databaseFactory.dataBase) {
+            val githubId = userInfo.id.toString()
+            val currentUser = User.find(Users.github_token eq githubId).firstOrNull()
+            if (currentUser != null) {
+                return@transaction UserResponse(currentUser)
+            }
 
-        val githubId = userInfo.id.toString()
-        val currentUser = User.find(Users.github_token eq githubId).firstOrNull()
-        if (currentUser != null) {
-            return UserResponse(currentUser)
+            val userId = Users.insert {
+                it[username] = userInfo.login
+                it[github_token] = githubId
+            } get Users.id
+
+            return@transaction UserResponse(id = userId.value, admin = false, display_name = userInfo.login)
         }
-
-        val userId = Users.insert {
-            it[Users.username] = userInfo.login
-            it[Users.github_token] = githubId
-        } get Users.id
-
-        return UserResponse(id = userId.value, admin = false, display_name = userInfo.login)
     }
 
     override fun createToken(user: UserResponse): String {

@@ -1,0 +1,44 @@
+name: Build docker image on push
+on:
+  push:
+    branches: [master]
+
+env:
+  DOCKER_USER: ${{secrets.DOCKER_USER}}
+  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  REPO_NAME: ebiznes-backend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 18
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Execute Gradle build
+        run: ./gradlew buildFatJar
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          title: "Development Build"
+          automatic_release_tag: "latest"
+          files: |
+            app/build/libs/fat.jar
+
+      - name: Docker 🐳 login
+        run: | # log into docker hub account
+          docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+
+      - name: Build the Docker 🐳 image
+        run: docker build . -t ${DOCKER_USER}/${REPO_NAME}:latest
+
+      - name: Docker 🐳 Push
+        run: docker push ${DOCKER_USER}/${REPO_NAME}:latest
