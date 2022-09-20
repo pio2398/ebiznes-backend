@@ -17,11 +17,9 @@ fun Application.configureAuth() {
 
     install(Authentication) {
         jwt("auth-jwt") {
-            //realm = myRealm
             verifier(
                 JWT
                     .require(Algorithm.HMAC256(settingsService.jwt.jwtSecret))
-                    //.withAudience(audience)
                     .withIssuer(settingsService.jwt.jwtIssuer)
                     .build()
             )
@@ -32,7 +30,7 @@ fun Application.configureAuth() {
                     null
                 }
             }
-            challenge { _defaultScheme, _realm ->
+            challenge { _, _ ->
                 throw PermissionDeniedException("Token is not valid or has expired")
             }
         }
