@@ -4,8 +4,7 @@ on:
     branches: [master]
 
 env:
-#   DOCKER_USER: ${{secrets.DOCKER_USER}}
-#   DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  DOCKER_USER: ${{secrets.DOCKER_USER}}
   REPO_NAME: ebiznes-backend
 
 jobs:
