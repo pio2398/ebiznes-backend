@@ -33,9 +33,11 @@ jobs:
           files: |
             app/build/libs/fat.jar
 
-      - name: Docker 🐳 login
-        run: | # log into docker hub account
-          docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build the Docker 🐳 image
         run: docker build . -t ${DOCKER_USER}/${REPO_NAME}:latest
