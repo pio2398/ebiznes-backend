@@ -1,7 +1,7 @@
 package com.example
 
 import com.example.plugins.configureAuth
-import com.example.plugins.configureCookies
+import com.example.plugins.configureCors
 import com.example.plugins.configureRouting
 import com.example.services.*
 import io.ktor.serialization.kotlinx.json.*
@@ -33,5 +33,5 @@ fun Application.module() {
     }
     configureRouting()
     configureAuth()
-    configureCookies()
+    configureCors()
 }

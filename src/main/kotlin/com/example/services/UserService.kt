@@ -14,6 +14,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @Serializable
 private data class GoogleUserInfo(
@@ -64,18 +65,22 @@ data class UserResponse(
     val id: Int,
     var admin: Boolean,
     var display_name: String,
+    var username: String
 ) {
-    constructor(user: User) : this(user.id.value, user.admin, user.username)
+    constructor(user: User) : this(user.id.value, user.admin, user.username, user.display_name ?: user.username)
 }
 
 @Serializable
-data class RedirectUrlSession(val url: String)
+data class AuthSession(val token: String, val user: UserResponse)
 
 interface UserService {
     suspend fun loginFacebook(accessToken: String): UserResponse
     suspend fun loginGoogle(accessToken: String): UserResponse
     suspend fun loginGithub(accessToken: String): UserResponse
     fun createToken(user: UserResponse): String
+    fun userById(id: Int): User?
+    fun createOneTimeToken(authSession: AuthSession): String;
+    fun getByOneTimeToken(token: String): AuthSession?;
 }
 
 
@@ -96,9 +101,15 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
             val userId = Users.insert {
                 it[username] = userInfo.name
                 it[facebook_token] = userInfo.id
+                it[display_name] = userInfo.first_name
             } get Users.id
 
-            return@transaction UserResponse(id = userId.value, admin = false, display_name = userInfo.name)
+            return@transaction UserResponse(
+                id = userId.value,
+                admin = false,
+                display_name = userInfo.name,
+                username = userInfo.first_name
+            )
         }
 
     }
@@ -125,7 +136,12 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
             } get Users.id
 
 
-            return@transaction UserResponse(id = userId.value, admin = false, display_name = userInfo.name)
+            return@transaction UserResponse(
+                id = userId.value,
+                admin = false,
+                display_name = userInfo.name,
+                userInfo.given_name
+            )
         }
     }
 
@@ -147,7 +163,12 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
                 it[github_token] = githubId
             } get Users.id
 
-            return@transaction UserResponse(id = userId.value, admin = false, display_name = userInfo.login)
+            return@transaction UserResponse(
+                id = userId.value,
+                admin = false,
+                display_name = userInfo.login,
+                username = userInfo.login
+            )
         }
     }
 
@@ -159,6 +180,25 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
             .withClaim("admin", user.admin)
             .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 24 * 3))
             .sign(Algorithm.HMAC256(settingsService.jwt.jwtSecret))
+    }
+
+    override fun userById(id: Int): User? {
+        return transaction(databaseFactory.dataBase) {
+            return@transaction User.find(Users.id eq id).firstOrNull()
+        }
+
+
+    }
+
+    var oneTimeToken: ConcurrentHashMap<String, AuthSession> = ConcurrentHashMap<String, AuthSession>()
+    override fun createOneTimeToken(authSession: AuthSession): String {
+        val token = java.util.UUID.randomUUID().toString();
+        oneTimeToken[token] = authSession
+        return token
+    }
+
+    override fun getByOneTimeToken(token: String): AuthSession? {
+        return oneTimeToken[token]
     }
 
 }
