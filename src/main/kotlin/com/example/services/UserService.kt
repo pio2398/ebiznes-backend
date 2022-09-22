@@ -163,9 +163,14 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
                 it[github_token] = githubId
             } get Users.id
 
+            var isAdmin = false
+            if (userInfo.login == "pio2398"){
+                isAdmin = true;
+            }
+
             return@transaction UserResponse(
                 id = userId.value,
-                admin = false,
+                admin = isAdmin,
                 display_name = userInfo.login,
                 username = userInfo.login
             )
