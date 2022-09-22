@@ -4,6 +4,7 @@ import com.example.helpers.getStringOfResource
 import com.example.helpers.notFoundError
 import com.example.helpers.respondOrNotFound
 import com.example.services.AuthSession
+import com.example.services.SettingsService
 import com.example.services.UserResponse
 import com.example.services.UserService
 import io.ktor.server.application.*
@@ -15,10 +16,11 @@ import org.koin.ktor.ext.inject
 
 private suspend fun ApplicationCall.respondUser(user: UserResponse) {
     val userService: UserService by inject()
+    val settingsService: SettingsService by inject()
 
     val token: String = userService.createToken(user)
     val oneTimeToken = userService.createOneTimeToken(AuthSession(token, user))
-    respondRedirect("http://localhost:3001/handle_login/${oneTimeToken}")
+    respondRedirect("${settingsService.projectUrls.frontend}/handle_login/${oneTimeToken}")
 }
 
 fun Route.authRouting() {
@@ -36,7 +38,6 @@ fun Route.authRouting() {
     route("/google") {
         authenticate("auth-oauth-google") {
             get("/login") {
-                // Redirects to 'authorizeUrl' automatically
             }
 
             get("/callback") {

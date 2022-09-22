@@ -1,7 +1,7 @@
 name: Build docker image on push
 on:
   push:
-    branches: [master]
+    branches: [ master ]
 
 env:
   DOCKER_USER: ${{secrets.DOCKER_USER}}

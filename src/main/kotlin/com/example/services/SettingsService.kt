@@ -4,14 +4,14 @@ import io.ktor.server.application.*
 
 data class Jwt(val jwtSecret: String, val jwtIssuer: String)
 
-data class Settings(val domain: String)
+data class ProjectsUrls(val backend: String, val frontend: String)
 
 data class OAuth(val clientId: String, val clientSecret: String)
 
 data class Strip(val publishableKey: String);
 
 interface SettingsService {
-    val projectDomain: Settings;
+    val projectUrls: ProjectsUrls;
     val jwt: Jwt;
     val oAuthGoogle: OAuth
     val oAuthGithub: OAuth
@@ -22,8 +22,11 @@ interface SettingsService {
 
 
 class SettingsServiceImpl(private val environment: ApplicationEnvironment) : SettingsService {
-    override val projectDomain: Settings
-        get() = Settings(environment.config.propertyOrNull("settings.domain")!!.getString())
+    override val projectUrls: ProjectsUrls
+        get() = ProjectsUrls(
+            environment.config.propertyOrNull("settings.domain")!!.getString(),
+            environment.config.propertyOrNull("settings.frontend")!!.getString()
+        )
 
     override val jwt: Jwt
         get() = Jwt(

@@ -35,7 +35,7 @@ fun Application.configureAuth() {
             }
         }
         oauth("auth-oauth-google") {
-            urlProvider = { "${settingsService.projectDomain.domain}/auth/google/callback" }
+            urlProvider = { "${settingsService.projectUrls.backend}/auth/google/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",
@@ -53,15 +53,15 @@ fun Application.configureAuth() {
             client = httpClient
         }
         oauth("github-oauth") {
-            urlProvider = { "${settingsService.projectDomain}/auth/github/callback" }
+            urlProvider = { "${settingsService.projectUrls.backend}/auth/github/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "github",
                     accessTokenUrl = "https://github.com/login/oauth/access_token",
                     authorizeUrl = "https://github.com/login/oauth/authorize",
                     requestMethod = HttpMethod.Post,
-                    clientId = settingsService.oAuthGoogle.clientId,
-                    clientSecret = settingsService.oAuthGoogle.clientSecret,
+                    clientId = settingsService.oAuthGithub.clientId,
+                    clientSecret = settingsService.oAuthGithub.clientSecret,
                     defaultScopes = listOf(
                         "user:email", "read:user"
                     )
@@ -71,15 +71,15 @@ fun Application.configureAuth() {
         }
 
         oauth("facebook-oauth") {
-            urlProvider = { "${settingsService.projectDomain}/auth/facebook/callback" }
+            urlProvider = { "${settingsService.projectUrls.backend}/auth/facebook/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "github",
                     accessTokenUrl = "https://graph.facebook.com/v14.0/oauth/access_token",
                     authorizeUrl = "https://www.facebook.com/v14.0/dialog/oauth",
                     requestMethod = HttpMethod.Get,
-                    clientId = settingsService.oAuthGoogle.clientId,
-                    clientSecret = settingsService.oAuthGoogle.clientSecret,
+                    clientId = settingsService.oAuthFacebook.clientId,
+                    clientSecret = settingsService.oAuthFacebook.clientSecret,
                     defaultScopes = listOf(
                         "public_profile", "email"
                     )
