@@ -4,6 +4,7 @@ package com.example.plugins
 import com.example.auth.authRouting
 import com.example.cart.cartRoutes
 import com.example.categories.categoriesRoutes
+import com.example.orders.orderRoutes
 import com.example.products.productRoutes
 import com.example.services.SettingsService
 import io.ktor.http.*
@@ -26,8 +27,7 @@ fun Application.configureRouting() {
 
     productRoutes()
     categoriesRoutes()
-
-
     cartRoutes()
+    orderRoutes()
 
 }

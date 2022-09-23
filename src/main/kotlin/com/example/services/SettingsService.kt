@@ -8,7 +8,7 @@ data class ProjectsUrls(val backend: String, val frontend: String)
 
 data class OAuth(val clientId: String, val clientSecret: String)
 
-data class Strip(val publishableKey: String);
+data class Strip(val publishableKey: String, val secretKey: String);
 
 interface SettingsService {
     val projectUrls: ProjectsUrls;
@@ -53,7 +53,9 @@ class SettingsServiceImpl(private val environment: ApplicationEnvironment) : Set
 
     override val strip: Strip
         get() = Strip(
-            environment.config.propertyOrNull("stripe.publishableKey")!!.getString()
+            environment.config.propertyOrNull("stripe.publishableKey")!!.getString(),
+            environment.config.propertyOrNull("stripe.secretKey")!!.getString()
         )
+
 }
 

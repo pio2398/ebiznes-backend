@@ -46,9 +46,8 @@ fun ApplicationCall.getUser(): User? {
 }
 
 fun ApplicationCall.checkAdminPrivileges() {
-    val p = principal<JWTPrincipal>()
-    val admin = p?.payload?.getClaim("admin")
-    if (admin == null || !(admin.asBoolean())) {
+    val admin = principal<JWTPrincipal>()?.payload?.getClaim("admin") ?: return
+    if (admin.asBoolean() == false) {
         throw PermissionDeniedException("Permission Denied");
     }
 }

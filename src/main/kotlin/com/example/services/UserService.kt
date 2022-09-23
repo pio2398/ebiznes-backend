@@ -157,16 +157,17 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
             if (currentUser != null) {
                 return@transaction UserResponse(currentUser)
             }
-
-            val userId = Users.insert {
-                it[username] = userInfo.login
-                it[github_token] = githubId
-            } get Users.id
-
             var isAdmin = false
             if (userInfo.login == "pio2398") {
                 isAdmin = true;
             }
+            val userId = Users.insert {
+                it[username] = userInfo.login
+                it[github_token] = githubId
+                it[admin] = isAdmin
+            } get Users.id
+
+
 
             return@transaction UserResponse(
                 id = userId.value,

@@ -18,7 +18,8 @@ val koinModule = module {
     singleOf(::CategoriesServiceImpl) { bind<CategoriesService>() }
     singleOf(::UserServiceImpl) { bind<UserService>() }
     singleOf(::CartServiceImpl) { bind<CartService>() }
-
+    singleOf(::OrderServiceImpl) { bind<OrderService>() }
+    singleOf(::StripeServiceImpl) { bind<StripeService>() }
 }
 
 fun main(args: Array<String>) {
