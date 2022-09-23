@@ -2,6 +2,7 @@ package com.example.categories
 
 import com.example.categories.dto.CategoryDTO
 import com.example.exceptions.InvalidInputException
+import com.example.helpers.checkAdminPrivileges
 import com.example.helpers.getIdOfResource
 import com.example.helpers.respondOrNotFound
 import com.example.services.CategoriesService
@@ -24,6 +25,7 @@ fun Application.categoriesRoutes() {
             call.respond(categoryService.getCategoriesListOnMainPage())
         }
         post("/categories") {
+            call.checkAdminPrivileges()
             try {
                 val category = call.receive<CategoryDTO>()
                 call.respond(categoryService.addCategory(category))

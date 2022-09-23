@@ -1,6 +1,7 @@
 package com.example.helpers
 
 import com.example.exceptions.InvalidInputException
+import com.example.exceptions.PermissionDeniedException
 import com.example.models.User
 import com.example.services.UserService
 import io.ktor.http.*
@@ -42,4 +43,16 @@ fun ApplicationCall.getUser(): User? {
         val id = payload.getClaim("id").asInt();
         userService.userById(id)
     }
+}
+
+fun ApplicationCall.checkAdminPrivileges() {
+    val p = principal<JWTPrincipal>()
+    val admin = p?.payload?.getClaim("admin")
+    if (admin == null || !(admin.asBoolean())) {
+        throw PermissionDeniedException("Permission Denied");
+    }
+}
+
+fun ApplicationCall.getUserId(): Int? {
+    return principal<JWTPrincipal>()?.payload?.getClaim("id")?.asInt()
 }

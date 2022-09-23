@@ -1,6 +1,7 @@
 package com.example.products
 
 import com.example.exceptions.InvalidInputException
+import com.example.helpers.checkAdminPrivileges
 import com.example.helpers.getIdOfResource
 import com.example.helpers.respondOrNotFound
 import com.example.products.dto.ProductDetails
@@ -21,6 +22,7 @@ fun Application.productRoutes() {
             call.respond(productService.getProductsList())
         }
         post("/products") {
+            call.checkAdminPrivileges()
             try {
                 val product = call.receive<ProductDetails>()
                 call.respond(productService.addProduct(product))

@@ -164,7 +164,7 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
             } get Users.id
 
             var isAdmin = false
-            if (userInfo.login == "pio2398"){
+            if (userInfo.login == "pio2398") {
                 isAdmin = true;
             }
 
@@ -183,7 +183,7 @@ class UserServiceImpl(private val databaseFactory: DatabaseFactory, private val 
             .withClaim("id", user.id)
             .withClaim("display_name", user.display_name)
             .withClaim("admin", user.admin)
-            .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 24 * 3))
+            .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 24 * 3 * 60))
             .sign(Algorithm.HMAC256(settingsService.jwt.jwtSecret))
     }
 

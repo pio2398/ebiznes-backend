@@ -38,6 +38,6 @@ class ProductServiceImpl(private val databaseFactory: DatabaseFactory) : Product
             it[Products.category] = category.id
         } get Products.id
 
-        productDetails.copy(product_id = productId.value);
+        productDetails.copy(id = productId.value);
     }
 }

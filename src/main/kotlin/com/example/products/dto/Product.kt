@@ -7,7 +7,7 @@ data class ProductDetails(
     val name: String,
     val price: Int,
     val category_id: Int,
-    val product_id: Int? = null,
+    val id: Int? = null,
     val description: String? = null,
     val picture_url: String? = null,
     val attributes: List<ProductAttributes> = listOf()
